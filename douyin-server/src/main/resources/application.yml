@@ -1,0 +1,38 @@
+spring:
+  #数据库的连接信息
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/douyin?serverTimezone=UTC
+    username: root
+    password: 623416
+  #文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  #redis数据库的连接信息
+  redis:
+    host: localhost
+    port: 6379
+    database: 10
+
+# mybatis的配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名映射
+    map-underscore-to-camel-case: true
+
+#dept阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LTAI5tRfcNJTgpakmCEnG3Qw
+    accessKeySecret: JYi70f8qGONdbu77obHRdl0Tz8Jgvl
+    bucketName: liu-web-tlias666
+
+#spring事务管理日志
+logging:
+  level:
+    org.springframework.transaction: DEBUG
+
