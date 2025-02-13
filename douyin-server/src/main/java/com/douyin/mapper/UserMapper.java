@@ -30,4 +30,6 @@ public interface UserMapper {
      */
     @Select("select username, name, phone, gender, avatar, create_time, cash from douyin.user where id = #{id}")
     User getById(Integer id);
+
+
 }
