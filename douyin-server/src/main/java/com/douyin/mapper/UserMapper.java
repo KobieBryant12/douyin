@@ -1,6 +1,7 @@
 package com.douyin.mapper;
 
 import com.douyin.entity.User;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -32,4 +33,18 @@ public interface UserMapper {
     User getById(Integer id);
 
 
+    /**
+     * 根据ID删除用户
+     * @param id
+     */
+    @Delete("delete from douyin.user where id = #{id}")
+    void deleteById(Integer id);
+
+    /**
+     * 根据用户名和密码查询用户
+     * @param user
+     * @return
+     */
+    @Select("select * from douyin.user where username = #{username} and password = #{password}")
+    User getByUsernamAndPassword(User user);
 }

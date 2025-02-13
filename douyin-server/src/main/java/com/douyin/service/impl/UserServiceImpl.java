@@ -35,4 +35,19 @@ public class UserServiceImpl implements UserService{
     public User getById(Integer id) {
         return userMapper.getById(id);
     }
+
+    @Override
+    public void deleteUser(Integer id) {
+        userMapper.deleteById(id);
+    }
+
+    /**
+     * 根据username和password实现用户登录
+     * @param user
+     * @return
+     */
+    @Override
+    public User login(User user) {
+        return userMapper.getByUsernamAndPassword(user);
+    }
 }
