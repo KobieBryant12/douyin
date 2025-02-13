@@ -41,6 +41,11 @@ public class UserController {
     }
 
 
+    /**
+     * 根据ID查询用户基本信息
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Result getUserById(@PathVariable Integer id){
         log.info("查询id为 {} 的用户信息", id);
