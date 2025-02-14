@@ -62,14 +62,14 @@ public class LoginController {
                     System.out.println(o);
                     return Result.success(jwt);
                 } else {//用户之前已登录
-                    return Result.success("用户已登录");
+                    return Result.error("用户已登录");
                 }
             }else{
-                return Result.success("用户被禁用，请联系管理员");
+                return Result.error("用户被禁用，请联系管理员");
             }
         }
 
-        return Result.success("用户名或密码错误");
+        return Result.error("用户名或密码错误");
     }
 
 }
