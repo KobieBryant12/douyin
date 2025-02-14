@@ -23,13 +23,13 @@ public interface UserService{
      * @param id
      * @return
      */
-    User getById(Integer id);
+    User getById(Long id);
 
     /**
      * 根据ID删除用户
      * @param id
      */
-    void deleteUser(Integer id);
+    void deleteUser(Long id);
 
     /**
      * 用户登录
@@ -37,4 +37,11 @@ public interface UserService{
      * @return
      */
     User login(User user);
+
+
+    /**
+     * 根据ID启用或禁用用户
+     * @param id
+     */
+    void setUserStatusById(Short oldStatus, Long id);
 }

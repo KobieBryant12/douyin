@@ -5,6 +5,7 @@ import com.douyin.mapper.UserMapper;
 import com.douyin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +21,9 @@ public class UserServiceImpl implements UserService{
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         if(user.getPassword() == null || user.getPassword() == ""){
-            user.setPassword("123456");
+            user.setPassword("e10adc3949ba59abbe56e057f20f883e");//默认密码123456，MD5加密
+        }else{
+            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));//MD5加密
         }
         userMapper.insert(user);
     }
@@ -32,22 +35,28 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User getById(Integer id) {
+    public User getById(Long id) {
         return userMapper.getById(id);
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         userMapper.deleteById(id);
     }
 
-    /**
-     * 根据username和password实现用户登录
-     * @param user
-     * @return
-     */
+
     @Override
     public User login(User user) {
         return userMapper.getByUsernamAndPassword(user);
+    }
+
+
+    @Override
+    public void setUserStatusById(Short oldStatus, Long id) {
+        Short newStatus = (short)1;
+        if (oldStatus == (short)1){
+            newStatus = (short)0;
+        }
+        userMapper.setUserStatus(newStatus, id);
     }
 }

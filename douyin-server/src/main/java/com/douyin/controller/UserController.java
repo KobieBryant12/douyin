@@ -50,14 +50,19 @@ public class UserController {
      * @return
      */
     @GetMapping("/query/{id}")
-    public Result getUserById(@PathVariable Integer id){
+    public Result getUserById(@PathVariable Long id){
         log.info("查询id为 {} 的用户信息", id);
         User user = userService.getById(id);
         return Result.success(user);
     }
 
+    /**
+     * 根据ID删除用户
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
-    public Result deleteUser(@PathVariable Integer id){
+    public Result deleteUser(@PathVariable Long id){
         log.info("删除用户:{}", id);
 
         userService.deleteUser(id);
@@ -73,7 +78,35 @@ public class UserController {
     public Result exit(@PathVariable String username){
         log.info("用户：{} 退出登录", username);
 
+        //销毁该用户在redis中的jwt令牌
         redisTemplate.delete(username);
+        return Result.success();
+    }
+
+
+    /**
+     * 根据ID启用禁用账号
+     * @return
+     */
+    @GetMapping("/alterStatus/{id}")
+    public Result enableAndDisable(@PathVariable Long id){
+        User user = userService.getById(id);
+        Short oldStatus = user.getStatus();
+
+        //如果是1，则禁用用户，如果是0，则启用用户
+        String newStatus = "启用";
+        if(oldStatus == (short)1){
+            newStatus = "禁用";
+        }
+        log.info("{} 用户：{}", newStatus, id);
+
+        userService.setUserStatusById(oldStatus, id);
+
+        //如果是禁用，则销毁redis中该用户的jwt令牌
+        if(oldStatus == (short)1) {
+            redisTemplate.delete(user.getUsername());
+        }
+
         return Result.success();
     }
 }
