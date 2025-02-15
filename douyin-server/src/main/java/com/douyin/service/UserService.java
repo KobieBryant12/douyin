@@ -1,7 +1,9 @@
 package com.douyin.service;
 
 
+import com.douyin.dto.ChangePwd;
 import com.douyin.entity.User;
+import com.douyin.result.Result;
 
 public interface UserService{
 
@@ -44,4 +46,10 @@ public interface UserService{
      * @param id
      */
     void setUserStatusById(Short oldStatus, Long id);
+
+    /**
+     * 根据ID修改用户密码
+     * @param changePwd
+     */
+    Result changeUserPwd(ChangePwd changePwd);
 }

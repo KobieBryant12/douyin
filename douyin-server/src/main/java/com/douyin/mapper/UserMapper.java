@@ -1,5 +1,6 @@
 package com.douyin.mapper;
 
+import com.douyin.dto.ChangePwd;
 import com.douyin.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -53,4 +54,19 @@ public interface UserMapper {
      */
     @Update("update douyin.user set status = #{newStatus} where id = #{id}")
     void setUserStatus(Short newStatus, Long id);
+
+    /**
+     * 根据ID和密码查询用户 用于修改密码时确认用户
+     * @param id, password
+     * @return
+     */
+    @Select("select * from douyin.user where id = #{id} and password = #{password}")
+    User getByIdAndPassword(@Param("id") Long id, @Param("password") String password);
+
+    /**
+     * 根据ID修改用户密码
+     * @param user
+     */
+    @Update("update douyin.user set password = #{password}, update_time = #{updateTime} where id = #{id}")
+    void updatePwdById(User user);
 }

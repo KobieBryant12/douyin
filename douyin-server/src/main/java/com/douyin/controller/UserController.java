@@ -1,6 +1,7 @@
 package com.douyin.controller;
 
 
+import com.douyin.dto.ChangePwd;
 import com.douyin.entity.User;
 import com.douyin.result.Result;
 import com.douyin.service.UserService;
@@ -108,5 +109,17 @@ public class UserController {
         }
 
         return Result.success();
+    }
+
+    /**
+     * 根据ID修改用户密码
+     * @param changePwd
+     * @return
+     */
+    @PostMapping("/changepwd")
+    public Result changePassword(@RequestBody ChangePwd changePwd){
+        log.info("修改id为 {} 的用户的密码", changePwd.getId());
+
+        return userService.changeUserPwd(changePwd);
     }
 }
