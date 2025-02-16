@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void deleteUser(Long id) {
+        User user = userMapper.getById(id);
+
+        //删除用户的同时将用户在redis中的jwt删除
+        redisTemplate.delete(user.getUsername());
+
         userMapper.deleteById(id);
     }
 
