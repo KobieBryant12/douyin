@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShoppingCartDTO implements Serializable {
+
     private Long product_id;
 
 }
