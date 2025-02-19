@@ -9,9 +9,14 @@
             <if test="userId!=null">
                 user_id=#{userId}
             </if>
+            <if test="productId!=null">
+                and product_id=#{productId}
+            </if>
+
         </where>
 
     </delete>
+
     <insert id="insertBatch" parameterType="list">
         insert into shopping_cart
         (name, user_id, number, amount, create_time)
@@ -26,6 +31,10 @@
         <where>
             <if test="userId!=null">
                 user_id=#{userId}
+            </if>
+
+            <if test="productId!=null">
+                and product_id=#{productId}
             </if>
         </where>
     </select>

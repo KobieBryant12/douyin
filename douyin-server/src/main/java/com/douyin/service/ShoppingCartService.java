@@ -13,16 +13,16 @@ public interface ShoppingCartService {
      * 查看用户购物车
      * @return
      */
-    List<ShoppingCart> list();
+    List<ShoppingCart> list(Long userId);
 
     /**
-     * 删除购物车中的商品
-     * @param shoppingCartDTO
+     * 减小购物车中商品数量。若原数量大于1则减一，若等于1则删除
+     * @param shoppingCart
      */
-    void delete(ShoppingCartDTO shoppingCartDTO);
+    void decreaseProductNum(ShoppingCart shoppingCart);
 
     /**
      * 清空购物车
      */
-    void clean();
+    void clean(Long userId);
 }
