@@ -5,8 +5,8 @@
 <mapper namespace="com.douyin.mapper.ProductMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into douyin.product (name, category_id, price, description, status, create_time, update_time)
-        VALUES (#{name},#{categoryId},#{price},#{description},#{status},#{createTime},#{updateTime})
+        insert into douyin.product (name, category_id, price, description, create_time, update_time)
+        VALUES (#{name},#{categoryId},#{price},#{description}, #{createTime},#{updateTime})
     </insert>
 
     <update id="update">
@@ -45,7 +45,13 @@
         select * from product
         <where>
             <if test="name != null and name != ''">
-                and name like concat('%',#{name},'%')
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null ">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null ">
+                and status = #{status}
             </if>
         </where>
         order by create_time desc

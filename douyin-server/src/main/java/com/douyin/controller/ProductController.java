@@ -27,7 +27,7 @@ public class ProductController {
      */
     @PostMapping()
     public Result save(@RequestBody ProductDTO productDTO){
-        log.info("新增菜品：{}",productDTO);
+        log.info("新增商品：{}",productDTO);
         productService.save(productDTO);
         return Result.success();
     }
@@ -39,7 +39,7 @@ public class ProductController {
      */
     @GetMapping("/page")
     public Result page(ProductPageQueryDTO productPageQueryDTO){
-        log.info("菜品分页查询，参数为：{}",productPageQueryDTO);
+        log.info("商品分页查询，参数为：{}",productPageQueryDTO);
         PageResult pageResult =productService.pageQuery(productPageQueryDTO);
         return Result.success(pageResult);
     }
@@ -51,7 +51,7 @@ public class ProductController {
      */
     @DeleteMapping
     public Result delete(@RequestParam("ids") List<Long> ids){
-        log.info("删除菜品：{}",ids);
+        log.info("删除商品：{}",ids);
         productService.deleteBatch(ids);
         return Result.success();
     }
@@ -63,7 +63,7 @@ public class ProductController {
      */
     @PutMapping
     public Result update(@RequestBody ProductDTO productDTO){
-        log.info("修改菜品：{}",productDTO);
+        log.info("修改商品：{}",productDTO);
         productService.update(productDTO);
         return Result.success();
     }
