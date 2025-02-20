@@ -35,14 +35,14 @@
     </update>
 
     <delete id="deleteByIds">
-        DELETE FROM product WHERE id IN
+        DELETE FROM douyin.product WHERE id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
     </delete>
 
     <select id="pageQuery" resultType="com.douyin.entity.Product">
-        select * from product
+        select * from douyin.product
         <where>
             <if test="name != null and name != ''">
                 name like concat('%',#{name},'%')
