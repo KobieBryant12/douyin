@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -23,5 +24,5 @@ public class User {
     private LocalDateTime createTime; //注册时间
     private LocalDateTime updateTime; //修改时间
     private Short status; //用户状态 1：启用 2：禁用
-    private Double cash; //用户余额
+    private BigDecimal cash; //用户余额
 }
