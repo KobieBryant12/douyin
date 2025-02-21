@@ -24,9 +24,13 @@ public interface ProductMapper {
      */
     Page<Product> pageQuery(ProductPageQueryDTO productPageQueryDTO);
 
-    //单独查询
-    @Select("select * from product where id = #{id}")
-    Product getById(Long id);
+    /**
+     * 根据商品ID查询商品信息
+     * @param productId
+     * @return
+     */
+    @Select("select * from douyin.product where id = #{productId}")
+    Product getById(Long productId);
 
     /**
      * 根据id批量删除商品

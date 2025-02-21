@@ -8,6 +8,7 @@ import java.util.List;
 @Mapper
 public interface ShoppingCartMapper {
 
+
     List<ShoppingCart> list(ShoppingCart shoppingCart);
 
     /**
@@ -17,6 +18,13 @@ public interface ShoppingCartMapper {
      */
     @Select("select * from douyin.shopping_cart where user_id=#{userId}")
     List<ShoppingCart> listByUserId(Long userId);
+
+    /**
+     * 根据用户ID和商品ID查询购物车
+     * @return
+     */
+    @Select("select * from douyin.shopping_cart where product_id = #{productId} and user_id = #{userId}")
+    ShoppingCart getByUserIdAndProductId(@Param("productId") Long productId, @Param("userId") Long userId);
 
 
     @Update("update douyin.shopping_cart set number = #{number}, update_time=#{updateTime}  where id = #{id}")

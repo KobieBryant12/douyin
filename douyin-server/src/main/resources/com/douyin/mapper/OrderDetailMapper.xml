@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.douyin.mapper.OrderDetailMapper">
+    <insert id="addOrderDetail">
+        insert into douyin.order_detail
+        (order_id, user_id, product_id, number, price)
+        values
+        <foreach collection="orderDetails" item="sod" separator=",">
+            (#{sod.orderId}, #{sod.userId}, #{sod.productId}, #{sod.number}, #{sod.price})
+        </foreach>
+    </insert>
+</mapper>

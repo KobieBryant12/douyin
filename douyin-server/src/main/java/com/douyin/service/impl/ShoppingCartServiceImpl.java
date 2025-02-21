@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Autowired
     private ProductMapper productMapper;
+
 
     @Override
     public void addShoppingCart(ShoppingCart shoppingCart) {
@@ -40,6 +42,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             Long productId =  shoppingCart.getProductId();
             Product product = productMapper.getById(productId);
             shoppingCart.setNumber(1);
+            shoppingCart.setPrice(product.getPrice());
+            shoppingCart.setName(product.getName());
             shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCart.setUpdateTime(LocalDateTime.now());
             shoppingCartMapper.insert(shoppingCart);
