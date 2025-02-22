@@ -9,6 +9,7 @@
         select id
         from douyin.order
         where pay_status = 0 and
+              id in
               <foreach collection="orderIds" item="id" separator=",">
                   (#{id})
               </foreach>
