@@ -27,8 +27,8 @@ public class ShoppingCartController {
     @PostMapping("/add")
     public Result add(@RequestBody ShoppingCart shoppingCart) {
         log.info("添加购物车，商品信息为：{}", shoppingCart);
-        shoppingCartService.addShoppingCart(shoppingCart);
-        return Result.success();
+
+        return shoppingCartService.addShoppingCart(shoppingCart);
     }
 
     /**
@@ -43,15 +43,15 @@ public class ShoppingCartController {
     }
 
     /**
-     * 删除购物车中的一个商品
+     * 删除购物车中的一个商品 数量减一
      * @param shoppingCart
      * @return
      */
-    @PostMapping("/sub")
+    @DeleteMapping("/sub")
     public Result delete(@RequestBody ShoppingCart shoppingCart){
         log.info("删除购物车中的商品:{}",shoppingCart);
-        shoppingCartService.decreaseProductNum(shoppingCart);
-        return Result.success();
+
+        return  shoppingCartService.decreaseProductNum(shoppingCart);
     }
 
     /**
@@ -61,8 +61,7 @@ public class ShoppingCartController {
     @DeleteMapping("/clean/{userId}")
     public Result clean(@PathVariable Long userId){
         log.info("清空购物车");
-        shoppingCartService.clean(userId);
 
-        return Result.success();
+        return shoppingCartService.clean(userId);
     }
 }

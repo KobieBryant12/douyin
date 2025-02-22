@@ -1,5 +1,6 @@
 package com.douyin.service.impl;
 
+import com.douyin.constant.MessageConstant;
 import com.douyin.entity.AddressBook;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.ShoppingCart;
@@ -43,19 +44,21 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result addOrder(OrderAndDetail orderAndDetail) {
-        //根据用户id查询是否有默认地址，没有则返回
+        //根据用户id查询是否有默认地址，没有则返回错误信息
         Long userId = orderAndDetail.getUserId();
         Short isDefault = (short)1;
         AddressBook defaultAddress = addressBookMapper.getByUserIdAndDefault(userId, isDefault);
         if(defaultAddress == null){
-            return Result.error("没有收货地址，无法下单!");
+            return Result.error(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
-        Long byUserId = orderMapper.getByUserId(orderAndDetail);
-        if(byUserId != null){
-            return Result.error("还有订单未处理！");
+        //根据用户id查询是否有未支付的订单，有则返回错误信息
+        Long byUserIdAndStatus = orderMapper.getByUserIdAndStatus(orderAndDetail);
+        if(byUserIdAndStatus != null){
+            return Result.error(MessageConstant.UNPROCESSED_ORDER);
         }
-        //创建订单表
+
+        //创建订单表，地址id设置为用户的默认地址
         orderAndDetail.setCreateTime(LocalDateTime.now());
         orderAndDetail.setAddressId(defaultAddress.getId());
         String orderNumber = UUID.randomUUID().toString() + orderAndDetail.getUserId() + "";
@@ -77,7 +80,6 @@ public class OrderServiceImpl implements OrderService {
             singleOrderDetails[i].setNumber(byUserIdAndProductId.getNumber());
         }
         List<SingleOrderDetail> orderDetails = Arrays.asList(singleOrderDetails);
-
 
         //创建订单明细表
         orderDetailMapper.addOrderDetail(orderDetails);

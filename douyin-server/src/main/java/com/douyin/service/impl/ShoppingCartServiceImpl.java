@@ -1,14 +1,21 @@
 package com.douyin.service.impl;
 
+import com.douyin.constant.MessageConstant;
 import com.douyin.dto.ShoppingCartDTO;
+import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.Product;
 import com.douyin.entity.ShoppingCart;
+import com.douyin.entity.SingleOrderDetail;
+import com.douyin.mapper.OrderDetailMapper;
+import com.douyin.mapper.OrderMapper;
 import com.douyin.mapper.ProductMapper;
 import com.douyin.mapper.ShoppingCartMapper;
+import com.douyin.result.Result;
 import com.douyin.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.ReactiveSubscription;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +32,31 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ProductMapper productMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
 
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
+
+    @Transactional
     @Override
-    public void addShoppingCart(ShoppingCart shoppingCart) {
+    public Result addShoppingCart(ShoppingCart shoppingCart) {
+        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续添加
+        SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
+        singleOrderDetail.setProductId(shoppingCart.getProductId());
+        singleOrderDetail.setUserId(shoppingCart.getUserId());
+        List<Long> orderIds = orderDetailMapper.list(singleOrderDetail);
+
+        //如果订单明细表中查询到记录，再根据查询到的订单id查询是否有未处理的订单
+        if(orderIds != null && orderIds.size() != 0){
+            List<Long> byOrderIdAndStatus = orderMapper.getByOrderIdAndStatus(orderIds);
+            //有未处理的订单
+            if(byOrderIdAndStatus != null && byOrderIdAndStatus.size() != 0){
+                return Result.error(MessageConstant.UNPROCESSED_ORDER);
+            }
+        }
+
 
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
 
@@ -48,7 +77,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setUpdateTime(LocalDateTime.now());
             shoppingCartMapper.insert(shoppingCart);
         }
-
+        return Result.success();
     }
 
     /**
@@ -69,9 +98,25 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      *
      * @param shoppingCart
      */
+    @Transactional
     @Override
-    public void decreaseProductNum(ShoppingCart shoppingCart) {
+    public Result decreaseProductNum(ShoppingCart shoppingCart) {
+        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续删除
+        SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
+        singleOrderDetail.setProductId(shoppingCart.getProductId());
+        singleOrderDetail.setUserId(shoppingCart.getUserId());
+        List<Long> orderIds = orderDetailMapper.list(singleOrderDetail);
 
+        //如果订单明细表中查询到记录，再根据查询到的订单id查询是否有未处理的订单
+        if(orderIds != null && orderIds.size() != 0){
+            List<Long> byOrderIdAndStatus = orderMapper.getByOrderIdAndStatus(orderIds);
+            //有未处理的订单
+            if(byOrderIdAndStatus != null && byOrderIdAndStatus.size() != 0){
+                return Result.error(MessageConstant.UNPROCESSED_ORDER);
+            }
+        }
+
+        //没有有未处理的订单
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
         Integer number = list.get(0).getNumber();
         if (number > 1) {//数量大于1,将数量-1
@@ -80,14 +125,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else {//数量小于1，在购物车中删除商品
             shoppingCartMapper.delete(list.get(0));
         }
-
+        return Result.success();
     }
 
     /**
      * 根据用户id清空购物车
      */
+    @Transactional
     @Override
-    public void clean(Long userId) {
+    public Result clean(Long userId) {
+        OrderAndDetail orderAndDetail = new OrderAndDetail();
+        orderAndDetail.setUserId(userId);
+        Long byUserIdAndStatus = orderMapper.getByUserIdAndStatus(orderAndDetail);
+        if(byUserIdAndStatus != null){
+            return Result.error(MessageConstant.UNPROCESSED_ORDER);
+        }
         shoppingCartMapper.cleanById(userId);
+        return Result.success();
     }
 }

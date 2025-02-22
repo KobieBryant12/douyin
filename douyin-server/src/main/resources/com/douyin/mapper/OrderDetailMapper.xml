@@ -11,4 +11,14 @@
             (#{sod.orderId}, #{sod.userId}, #{sod.productId}, #{sod.number}, #{sod.price})
         </foreach>
     </insert>
+    
+    <select id="list" resultType="java.lang.Long">
+        select order_id 
+        from douyin.order_detail
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="productId != null">and product_id = #{productId}</if>
+        </where>
+    </select>
+
 </mapper>

@@ -1,10 +1,14 @@
 package com.douyin.mapper;
 
 import com.douyin.entity.OrderAndDetail;
+import com.douyin.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
+
 
 @Mapper
 public interface OrderMapper {
@@ -26,12 +30,12 @@ public interface OrderMapper {
     Long getByUserIdAndOrderNumber(OrderAndDetail orderAndDetail);
 
     /**
-     * 根据用户id查询订单
+     * 根据用户id和状态查询订单
      * @param orderAndDetail
-     * @return
+     * @return 返回订单id
      */
-    @Select("select id from douyin.order where user_id = #{userId}")
-    Long getByUserId(OrderAndDetail orderAndDetail);
+    @Select("select id from douyin.order where user_id = #{userId} and pay_status = 0")
+    Long getByUserIdAndStatus(OrderAndDetail orderAndDetail);
 
     /**
      * 根据订单ID查询订单支付方式
@@ -47,4 +51,11 @@ public interface OrderMapper {
      */
     @Update("update douyin.order set pay_method = #{newPayMethod} where id = #{orderId}")
     void updatePayMethod(Short newPayMethod, Long orderId);
+
+    /**
+     * 根据订单id集合和状态返回订单id
+     * @param orderIds
+     * @return
+     */
+    List<Long> getByOrderIdAndStatus(List<Long> orderIds);
 }
