@@ -13,4 +13,13 @@
                   (#{id})
               </foreach>
     </select>
+
+    <select id="list" resultType="com.douyin.entity.OrderAndDetail">
+        select *
+        from douyin.order
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="id != null">and id = #{id}</if>
+        </where>
+    </select>
 </mapper>

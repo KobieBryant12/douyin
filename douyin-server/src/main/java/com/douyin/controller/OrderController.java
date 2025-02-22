@@ -39,4 +39,15 @@ public class OrderController {
         orderService.updateOrderPayMethod(orderId);
         return Result.success();
     }
+
+    /**
+     * 查询用户的订单
+     * @return 返回用户的订单明细集合
+     */
+    @PostMapping("/query")
+    public Result listOrder(@RequestBody OrderAndDetail orderAndDetail){
+        log.info("查询用户：{} 的订单信息", orderAndDetail.getUserId());
+
+        return orderService.listOrder(orderAndDetail);
+    }
 }

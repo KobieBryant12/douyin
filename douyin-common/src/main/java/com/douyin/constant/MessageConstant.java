@@ -25,5 +25,6 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String UNPROCESSED_ORDER = "有未处理的订单，请先处理！";
+    public static final String SUSPENSION_OF_SALES = "商品停售！";
 
 }

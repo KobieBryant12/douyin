@@ -11,15 +11,13 @@ import com.douyin.mapper.OrderMapper;
 import com.douyin.mapper.ShoppingCartMapper;
 import com.douyin.result.Result;
 import com.douyin.service.OrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -100,6 +98,31 @@ public class OrderServiceImpl implements OrderService {
             newPayMethod = (short)2;
             orderMapper.updatePayMethod(newPayMethod, orderId);
         }
+    }
+
+    /**
+     * 查询用户的订单信息
+     * @param orderAndDetail
+     * @return 返回用户每个订单的订单明细集合
+     */
+    @Override
+    public Result listOrder(OrderAndDetail orderAndDetail) {
+        //根据用户id和订单id查询得到订单id集合
+        List<OrderAndDetail> orderAndDetailList = orderMapper.list(orderAndDetail);
+
+        //再根据订单id集合查询订单明细
+        List<OrderAndDetail> orderAndDetails = new ArrayList<>();
+        for(int i = 0; i < orderAndDetailList.size(); i++){
+            Long orderId = orderAndDetailList.get(i).getId();
+            List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(orderId);
+            SingleOrderDetail[] singleOrderDetailsArray = singleOrderDetails.toArray(new SingleOrderDetail[singleOrderDetails.size()]);
+            OrderAndDetail oad = new OrderAndDetail();
+            BeanUtils.copyProperties(orderAndDetailList.get(i), oad);
+            oad.setSingleOrderDetails(singleOrderDetailsArray);
+            orderAndDetails.add(oad);
+        }
+
+        return Result.success(orderAndDetails);
     }
 
 

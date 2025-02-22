@@ -42,6 +42,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     @Override
     public Result addShoppingCart(ShoppingCart shoppingCart) {
+        //如果该商品停售不可加入购物车
+        Integer status = productMapper.queryProductStatus(shoppingCart.getProductId());
+        if(status == 0){
+            return Result.error(MessageConstant.SUSPENSION_OF_SALES);
+        }
         //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续添加
         SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
         singleOrderDetail.setProductId(shoppingCart.getProductId());

@@ -46,7 +46,7 @@ public class ProductServiceImp implements ProductService {
     }
 
     /**
-     * 菜品分页查询
+     * 商品分页查询
      * @param productPageQueryDTO
      * @return
      */
@@ -61,7 +61,7 @@ public class ProductServiceImp implements ProductService {
     }
 
     /**
-     * 菜品批量删除
+     * 商品批量删除
      * @param ids
      */
     //TODO
@@ -95,7 +95,7 @@ public class ProductServiceImp implements ProductService {
     }
 
     /**
-     * 修改菜品
+     * 修改商品
      * @param productDTO
      */
     @Override

@@ -5,8 +5,8 @@
 <mapper namespace="com.douyin.mapper.ProductMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into douyin.product (name, category_id, price, description, create_time, update_time)
-        VALUES (#{name},#{categoryId},#{price},#{description}, #{createTime},#{updateTime})
+        insert into douyin.product (name, category_id, price, description, status, create_time, update_time)
+        VALUES (#{name},#{categoryId},#{price},#{description}, #{status}, #{createTime},#{updateTime})
     </insert>
 
     <update id="update">

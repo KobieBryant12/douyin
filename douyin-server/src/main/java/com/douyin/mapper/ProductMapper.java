@@ -43,4 +43,12 @@ public interface ProductMapper {
      * @param product
      */
     void update(Product product);
+
+    /**
+     * 根据商品ID查询商品状态
+     * @param productId
+     * @return
+     */
+    @Select("select status from douyin.product where id = #{productId}")
+    Integer queryProductStatus(Long productId);
 }

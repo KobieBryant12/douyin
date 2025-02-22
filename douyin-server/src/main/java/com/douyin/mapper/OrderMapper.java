@@ -58,4 +58,11 @@ public interface OrderMapper {
      * @return
      */
     List<Long> getByOrderIdAndStatus(List<Long> orderIds);
+
+    /**
+     * 查询用户订单信息
+     * @param orderAndDetail
+     * @return
+     */
+    List<OrderAndDetail> list(OrderAndDetail orderAndDetail);
 }

@@ -17,4 +17,10 @@ public interface OrderService {
      * @param orderId
      */
     void updateOrderPayMethod(Long orderId);
+
+    /**
+     * 查询用户的订单信息
+     * @param orderAndDetail
+     */
+    Result listOrder(OrderAndDetail orderAndDetail);
 }
