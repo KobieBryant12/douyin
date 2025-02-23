@@ -23,4 +23,24 @@
             <if test="id != null">and id = #{id}</if>
         </where>
     </select>
+
+    <update id="update" parameterType="com.douyin.entity.OrderAndDetail">
+        update douyin.order
+        <set>
+            <if test="cancelTime != null">
+                cancel_time=#{cancelTime},
+            </if>
+            <if test="payStatus != null">
+                pay_status=#{payStatus},
+            </if>
+            <if test="payMethod != null">
+                pay_method=#{payMethod},
+            </if>
+            <if test="checkoutTime != null">
+                checkout_time=#{checkoutTime},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

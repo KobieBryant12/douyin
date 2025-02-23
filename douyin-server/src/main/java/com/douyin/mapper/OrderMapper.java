@@ -2,6 +2,7 @@ package com.douyin.mapper;
 
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.ShoppingCart;
+import com.douyin.entity.SingleOrderDetail;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -65,4 +66,17 @@ public interface OrderMapper {
      * @return
      */
     List<OrderAndDetail> list(OrderAndDetail orderAndDetail);
+
+    /**
+     * 根据订单号查询订单
+     * @param orderNumber
+     */
+    @Select("select * from douyin.order where order_number = #{orderNumber}")
+    OrderAndDetail getByNumber(String orderNumber);
+
+    /**
+     * 更新订单
+     */
+    void update(OrderAndDetail orderAndDetail);
+
 }

@@ -1,14 +1,13 @@
 package com.douyin.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.douyin.constant.MessageConstant;
-import com.douyin.entity.AddressBook;
-import com.douyin.entity.OrderAndDetail;
-import com.douyin.entity.ShoppingCart;
-import com.douyin.entity.SingleOrderDetail;
-import com.douyin.mapper.AddressBookMapper;
-import com.douyin.mapper.OrderDetailMapper;
-import com.douyin.mapper.OrderMapper;
-import com.douyin.mapper.ShoppingCartMapper;
+import com.douyin.context.BaseContext;
+import com.douyin.dto.OrdersPaymentDTO;
+import com.douyin.entity.*;
+import com.douyin.exception.OrderBusinessException;
+import com.douyin.mapper.*;
 import com.douyin.result.Result;
 import com.douyin.service.OrderService;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -33,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private AddressBookMapper addressBookMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 创建订,成功返回订单ID
@@ -123,6 +126,69 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return Result.success(orderAndDetails);
+    }
+
+    /**
+     * 支付订单
+     * @param ordersPaymentDTO
+     * @return
+     */
+    public Integer payment(OrdersPaymentDTO ordersPaymentDTO) {
+        String orderNum = ordersPaymentDTO.getOrderNumber();
+        OrderAndDetail order =  orderMapper.getByNumber(orderNum);
+        //首先看一下订单状态是否是未支付
+        Short payStatus = order.getPayStatus();
+        if (payStatus != 0) return -1;
+
+        //计算总金额
+
+        List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
+            int num = singleOrderDetail.getNumber();
+            BigDecimal price = singleOrderDetail.getPrice();
+            totalPrice.add(price.multiply(new BigDecimal(num)));
+        }
+
+        //比较用户余额与订单总价
+        Long userId = order.getUserId();
+        User user = userMapper.getById(userId);
+        BigDecimal cash = user.getCash();
+        if (cash.compareTo(totalPrice) < 0) { //cash < totalPrice
+            return -1;
+        } else {
+            cash = cash.subtract(totalPrice);
+            user.setCash(cash);
+            userMapper.update(user);
+        }
+        return 1;
+    }
+
+
+    /**
+     * 支付成功回调函数，更新订单状态，删除订单中在购物车里对应的商品
+     * @param ordersPaymentDTO
+     */
+
+
+    public void paySuccess(OrdersPaymentDTO ordersPaymentDTO) {
+
+        String orderNum = ordersPaymentDTO.getOrderNumber();
+
+        // 根据订单号查询订单
+        OrderAndDetail order = orderMapper.getByNumber(orderNum);
+        order.setPayStatus((short) 1);
+        order.setCheckoutTime(LocalDateTime.now());
+        //更新订单状态
+        orderMapper.update(order);
+
+        //删除订单中在购物车里对应的商品
+        List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
+        for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
+            Long productId =  singleOrderDetail.getProductId();
+            shoppingCartMapper.deleteByProductId(productId);
+        }
+
     }
 
 
