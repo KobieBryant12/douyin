@@ -13,11 +13,6 @@ public interface OrderService {
      */
     Result addOrder(OrderAndDetail orderAndDetail);
 
-    /**
-     * 根据订单ID修改订单支付方式
-     * @param orderId
-     */
-    void updateOrderPayMethod(Long orderId);
 
     /**
      * 查询用户的订单信息

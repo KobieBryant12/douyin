@@ -18,8 +18,8 @@ public interface OrderMapper {
      * 创建订单
      * @param orderAndDetail
      */
-    @Insert("insert into douyin.order (user_id, order_number, address_id, create_time, pay_method)" +
-            " values (#{userId}, #{orderNumber}, #{addressId}, #{createTime}, #{payMethod})")
+    @Insert("insert into douyin.order (user_id, order_number, address_id, create_time)" +
+            " values (#{userId}, #{orderNumber}, #{addressId}, #{createTime})")
     void addOrder(OrderAndDetail orderAndDetail);
 
     /**
@@ -46,12 +46,6 @@ public interface OrderMapper {
     @Select("select * from douyin.order where id = #{orderId}")
     Short getPayMethodByOrderId(Long orderId);
 
-    /**
-     * 根据订单ID修改订单支付方式
-     * @param newPayMethod
-     */
-    @Update("update douyin.order set pay_method = #{newPayMethod} where id = #{orderId}")
-    void updatePayMethod(Short newPayMethod, Long orderId);
 
     /**
      * 根据订单id集合和状态返回订单id

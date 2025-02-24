@@ -27,7 +27,7 @@ public interface UserMapper {
      * @param id
      * @return
      */
-    @Select("select username, name, phone, gender, avatar, create_time, status, cash from douyin.user where id = #{id}")
+    @Select("select id, username, name, phone, gender, avatar, create_time, status, cash from douyin.user where id = #{id}")
     User getById(Long id);
 
 

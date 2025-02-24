@@ -87,21 +87,6 @@ public class OrderServiceImpl implements OrderService {
         return Result.success(orderId);
     }
 
-    /**
-     * 根据订单ID修改订单支付方式
-     * @param orderId
-     */
-    @Override
-    public void updateOrderPayMethod(Long orderId) {
-        Short payMethod = orderMapper.getPayMethodByOrderId(orderId);
-        Short newPayMethod = (short)1;
-        if(payMethod == (short)2 ){
-            orderMapper.updatePayMethod(newPayMethod, orderId);
-        }else{
-            newPayMethod = (short)2;
-            orderMapper.updatePayMethod(newPayMethod, orderId);
-        }
-    }
 
     /**
      * 查询用户的订单信息
@@ -131,36 +116,40 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 支付订单
      * @param ordersPaymentDTO
-     * @return
+     * @return 返回支付状态
      */
     public Integer payment(OrdersPaymentDTO ordersPaymentDTO) {
         String orderNum = ordersPaymentDTO.getOrderNumber();
         OrderAndDetail order =  orderMapper.getByNumber(orderNum);
         //首先看一下订单状态是否是未支付
         Short payStatus = order.getPayStatus();
-        if (payStatus != 0) return -1;
+        //订单已经支付，返回-1
+        if (payStatus == (short)1) return -1;
+
+        //订单已被取消 返回-2
+        if (payStatus == (short)2) return -2;
 
         //计算总金额
-
         List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
-        BigDecimal totalPrice = BigDecimal.ZERO;
+        BigDecimal totalPrice = new BigDecimal(0);
         for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
             int num = singleOrderDetail.getNumber();
             BigDecimal price = singleOrderDetail.getPrice();
-            totalPrice.add(price.multiply(new BigDecimal(num)));
+            totalPrice = totalPrice.add(price.multiply(new BigDecimal(num)));
         }
 
-        //比较用户余额与订单总价
+        //比较用户余额与订单总价 余额不足返回0
         Long userId = order.getUserId();
         User user = userMapper.getById(userId);
         BigDecimal cash = user.getCash();
         if (cash.compareTo(totalPrice) < 0) { //cash < totalPrice
-            return -1;
-        } else {
-            cash = cash.subtract(totalPrice);
-            user.setCash(cash);
-            userMapper.update(user);
+            return 0;
         }
+
+        //支付成功返回1
+        cash = cash.subtract(totalPrice);
+        user.setCash(cash);
+        userMapper.update(user);
         return 1;
     }
 
@@ -169,8 +158,6 @@ public class OrderServiceImpl implements OrderService {
      * 支付成功回调函数，更新订单状态，删除订单中在购物车里对应的商品
      * @param ordersPaymentDTO
      */
-
-
     public void paySuccess(OrdersPaymentDTO ordersPaymentDTO) {
 
         String orderNum = ordersPaymentDTO.getOrderNumber();

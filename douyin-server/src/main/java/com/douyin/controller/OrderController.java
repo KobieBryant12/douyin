@@ -30,17 +30,6 @@ public class OrderController {
         return orderService.addOrder(orderAndDetail);
     }
 
-    /**
-     * 根据订单id修改订单支付方式
-     * @return
-     */
-    @PutMapping("/paymethod/{orderId}")
-    public Result alterPayMethod(@PathVariable Long orderId){
-        log.info("修改订单：{} 的支付方式", orderId);
-
-        orderService.updateOrderPayMethod(orderId);
-        return Result.success();
-    }
 
     /**
      * 查询用户的订单
@@ -64,7 +53,13 @@ public class OrderController {
         //如果支付成功，修改订单状态为已支付，并删除订单中在购物车里对应的商品
         if (paymentStatus == 1){
             orderService.paySuccess(ordersPaymentDTO);
+            return Result.success();
+        } else if (paymentStatus == -1) {
+            return Result.error("订单已支付，请勿重复支付！");
+        } else if (paymentStatus == -2) {
+            return Result.error("订单已被取消！");
+        } else{
+            return Result.error("余额不足，请充值");
         }
-        return paymentStatus == 1 ? Result.success():Result.error("余额不足，请充值");
     }
 }

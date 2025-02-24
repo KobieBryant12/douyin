@@ -10,8 +10,8 @@
         from douyin.order
         where pay_status = 0 and
               id in
-              <foreach collection="orderIds" item="id" separator=",">
-                  (#{id})
+              <foreach collection="orderIds" item="id" separator="," open="(" close=")">
+                  #{id}
               </foreach>
     </select>
 
