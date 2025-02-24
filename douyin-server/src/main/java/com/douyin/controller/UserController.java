@@ -122,4 +122,16 @@ public class UserController {
 
         return userService.changeUserPwd(changePwd);
     }
+
+    /**
+     * 根据用户ID充值
+     * @param user
+     * @return
+     */
+    @PostMapping("/topUp")
+    public Result topUp(@RequestBody User user){
+        log.info("用户id: {} 充值：{}", user.getId(), user.getCash());
+        userService.topUpByUserId(user);
+        return Result.success();
+    }
 }

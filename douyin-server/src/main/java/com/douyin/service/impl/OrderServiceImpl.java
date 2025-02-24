@@ -37,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     /**
      * 创建订,成功返回订单ID
      * @param orderAndDetail
@@ -45,6 +48,17 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result addOrder(OrderAndDetail orderAndDetail) {
+        //查询要创建订单的商品中是否有停售的，如果有返回错误信息
+        SingleOrderDetail[] products = orderAndDetail.getSingleOrderDetails();
+        List<Long> productIds = new ArrayList<>();
+        for(int i = 0; i < products.length; i++){
+            productIds.add(products[i].getProductId());
+        }
+        List<Product> products1 = productMapper.queryProductStatusByProductIds(productIds);
+        if(products1 != null && products1.size() != 0){
+            return Result.error(MessageConstant.SUSPENSION_OF_SALES);
+        }
+
         //根据用户id查询是否有默认地址，没有则返回错误信息
         Long userId = orderAndDetail.getUserId();
         Short isDefault = (short)1;

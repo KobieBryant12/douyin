@@ -51,4 +51,11 @@ public interface ProductMapper {
      */
     @Select("select status from douyin.product where id = #{productId}")
     Integer queryProductStatus(Long productId);
+
+    /**
+     * 根据商品Id集合查询是否有停售的商品
+     * @param productIds
+     * @return
+     */
+    List<Product> queryProductStatusByProductIds(List<Long> productIds);
 }

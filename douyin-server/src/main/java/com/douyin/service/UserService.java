@@ -52,4 +52,10 @@ public interface UserService{
      * @param changePwd
      */
     Result changeUserPwd(ChangePwd changePwd);
+
+    /**
+     * 根据用户ID充值
+     * @param user
+     */
+    void topUpByUserId(User user);
 }

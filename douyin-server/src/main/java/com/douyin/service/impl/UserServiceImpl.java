@@ -8,8 +8,10 @@ import com.douyin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -98,5 +100,23 @@ public class UserServiceImpl implements UserService{
         redisTemplate.delete(user.getUsername());
 
         return Result.success();
+    }
+
+    @Transactional
+    @Override
+    public void topUpByUserId(User user) {
+        //先找到该id的用户余额
+        User oldUser = userMapper.getById(user.getId());
+        BigDecimal oldCash = oldUser.getCash();
+
+        //将之前的余额与充值的相加
+        BigDecimal addCash = user.getCash();
+        BigDecimal newCash = oldCash.add(addCash);
+
+        //更新余额
+        User newUser = new User();
+        newUser.setId(oldUser.getId());
+        newUser.setCash(newCash);
+        userMapper.update(newUser);
     }
 }
