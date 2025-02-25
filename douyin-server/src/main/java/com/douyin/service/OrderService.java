@@ -27,4 +27,6 @@ public interface OrderService {
     Integer payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception;
 
     void paySuccess(OrdersPaymentDTO ordersPaymentDTO);
+
+    void cancelOrderByNum(String orderNum);
 }

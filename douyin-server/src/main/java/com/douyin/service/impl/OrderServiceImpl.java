@@ -192,5 +192,23 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Override
+    public void cancelOrderByNum(String orderNum) {
+        // 根据订单号查询订单
+        OrderAndDetail order = orderMapper.getByNumber(orderNum);
+        if (order.getPayStatus() != 1) return;
+        order.setPayStatus((short) 2);
+        order.setCheckoutTime(LocalDateTime.now());
+        //更新订单状态
+        orderMapper.update(order);
+
+        //删除订单中在购物车里对应的商品
+        List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
+        for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
+            Long productId =  singleOrderDetail.getProductId();
+            shoppingCartMapper.deleteByProductId(productId);
+        }
+    }
+
 
 }

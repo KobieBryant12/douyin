@@ -62,4 +62,16 @@ public class OrderController {
             return Result.error("余额不足，请充值");
         }
     }
+
+    /**
+     * 根据订单号取消支付
+     * @param orderNum
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/cancel/{orderNum}")
+    public Result cancel(@PathVariable("orderNum") String orderNum) throws Exception {
+        orderService.cancelOrderByNum(orderNum);
+        return Result.success();
+    }
 }
