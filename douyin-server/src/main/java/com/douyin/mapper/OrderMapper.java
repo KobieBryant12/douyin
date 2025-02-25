@@ -3,10 +3,7 @@ package com.douyin.mapper;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.ShoppingCart;
 import com.douyin.entity.SingleOrderDetail;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -73,4 +70,10 @@ public interface OrderMapper {
      */
     void update(OrderAndDetail orderAndDetail);
 
+    /**
+     * 根据用户id删除订单表记录
+     * @param id
+     */
+    @Delete("delete from douyin.order where user_id = #{id}")
+    void deleteByUserId(Long id);
 }

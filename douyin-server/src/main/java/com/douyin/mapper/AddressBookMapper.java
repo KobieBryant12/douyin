@@ -56,6 +56,13 @@ public interface AddressBookMapper {
     void deleteById(Long id);
 
     /**
+     * 根据用户id删除地址表的记录
+     * @param id
+     */
+    @Delete("delete from douyin.address_book where user_id = #{id}")
+    void deleteByUserId(Long id);
+
+    /**
      * 查询用户的默认地址
      * @return
      */

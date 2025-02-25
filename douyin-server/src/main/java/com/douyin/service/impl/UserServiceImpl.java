@@ -1,9 +1,14 @@
 package com.douyin.service.impl;
 
 import com.douyin.dto.ChangePwd;
+import com.douyin.entity.SingleOrderDetail;
 import com.douyin.entity.User;
+import com.douyin.mapper.AddressBookMapper;
+import com.douyin.mapper.OrderDetailMapper;
+import com.douyin.mapper.OrderMapper;
 import com.douyin.mapper.UserMapper;
 import com.douyin.result.Result;
+import com.douyin.service.ShoppingCartService;
 import com.douyin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,12 +18,25 @@ import org.springframework.util.DigestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private ShoppingCartService shoppingCartService;
+
+    @Autowired
+    private AddressBookMapper addressBookMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -46,13 +64,30 @@ public class UserServiceImpl implements UserService{
         return userMapper.getById(id);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         User user = userMapper.getById(id);
 
+        //删除用户的订单明细记录和订单表记录
+        SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
+        singleOrderDetail.setUserId(id);
+        List<Long> list = orderDetailMapper.list(singleOrderDetail);
+        if(list != null && list.size() != 0) {
+            orderDetailMapper.deleteByUserId(id);
+            orderMapper.deleteByUserId(id);
+        }
+
+        //删除用户的购物车表记录
+        shoppingCartService.clean(id);
+
+        //删除用户的地址表记录
+        addressBookMapper.deleteByUserId(id);
+
         //删除用户的同时将用户在redis中的jwt删除
         redisTemplate.delete(user.getUsername());
 
+        //根据用户id删除用户表中的记录
         userMapper.deleteById(id);
     }
 

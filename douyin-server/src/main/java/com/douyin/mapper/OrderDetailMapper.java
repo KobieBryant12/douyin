@@ -3,6 +3,7 @@ package com.douyin.mapper;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.ShoppingCart;
 import com.douyin.entity.SingleOrderDetail;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -34,4 +35,11 @@ public interface OrderDetailMapper {
      */
     @Select("select * from douyin.order_detail where order_id = #{orderId}")
     List<SingleOrderDetail> listByOrderId(Long orderId);
+
+    /**
+     * 根据用户id删除订单明细记录
+     * @param id
+     */
+    @Delete("delete from douyin.order_detail where user_id = #{id}")
+    void deleteByUserId(Long id);
 }
