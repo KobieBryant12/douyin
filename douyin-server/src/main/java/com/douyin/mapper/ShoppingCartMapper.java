@@ -42,18 +42,16 @@ public interface ShoppingCartMapper {
     void update(ShoppingCart shoppingCart);
 
     /**
-     * 删除购物车中的一个商品
+     * 根据用户id和商品id删除购物车中的一个商品
      * @param shoppingCart
      */
     void delete(ShoppingCart shoppingCart);
 
     /**
-     * 清空购物车
+     * 根据用户id清空购物车
      * @param userId
      */
     @Delete("delete from douyin.shopping_cart where user_id=#{userId}")
     void cleanById(Long userId);
 
-    @Delete("delete from douyin.shopping_cart where product_id=#{productId}")
-    void deleteByProductId(Long productId);
 }

@@ -185,30 +185,46 @@ public class OrderServiceImpl implements OrderService {
 
         //删除订单中在购物车里对应的商品
         List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
+        ShoppingCart shoppingCart = new ShoppingCart();
         for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
             Long productId =  singleOrderDetail.getProductId();
-            shoppingCartMapper.deleteByProductId(productId);
+            shoppingCart.setUserId(order.getUserId());
+            shoppingCart.setProductId(productId);
+            shoppingCartMapper.delete(shoppingCart);
         }
 
     }
 
+    /**
+     * 根据订单号UUID取消支付
+     * @param orderNum
+     */
+    @Transactional
     @Override
-    public void cancelOrderByNum(String orderNum) {
+    public Result cancelOrderByNum(String orderNum) {
         // 根据订单号查询订单
+        //如果订单状态为1、2返回错误信息
         OrderAndDetail order = orderMapper.getByNumber(orderNum);
-        if (order.getPayStatus() != 1) return;
+        if (order.getPayStatus() == (short)1)
+            return Result.error(MessageConstant.ORDER_PAID);
+        if(order.getPayStatus() == (short)2)
+            return Result.error(MessageConstant.ORDER_CANCELLED);
+
         order.setPayStatus((short) 2);
-        order.setCheckoutTime(LocalDateTime.now());
+        order.setCancelTime(LocalDateTime.now());
         //更新订单状态
         orderMapper.update(order);
 
-        //删除订单中在购物车里对应的商品
+        //根据用户id和商品id删除订单中在购物车里对应的商品
         List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
+        ShoppingCart shoppingCart = new ShoppingCart();
         for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
             Long productId =  singleOrderDetail.getProductId();
-            shoppingCartMapper.deleteByProductId(productId);
+            shoppingCart.setUserId(order.getUserId());
+            shoppingCart.setProductId(productId);
+            shoppingCartMapper.delete(shoppingCart);
         }
+        return Result.success();
     }
-
 
 }

@@ -26,5 +26,7 @@ public class MessageConstant {
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String UNPROCESSED_ORDER = "有未处理的订单，请先处理！";
     public static final String SUSPENSION_OF_SALES = "商品停售！";
+    public static final String ORDER_PAID = "订单已支付";
+    public static final String ORDER_CANCELLED = "订单已取消";
 
 }

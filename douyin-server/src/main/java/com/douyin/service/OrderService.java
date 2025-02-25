@@ -28,5 +28,5 @@ public interface OrderService {
 
     void paySuccess(OrdersPaymentDTO ordersPaymentDTO);
 
-    void cancelOrderByNum(String orderNum);
+    Result cancelOrderByNum(String orderNum);
 }
