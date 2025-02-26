@@ -85,6 +85,6 @@ public interface OrderMapper {
      */
     List<OrderAndDetail> listByOrderIds(List<Long> orderIds);
 
-    @Select("select * from order where status = #{status} and order_time < #{orderTime}")
+    @Select("select * from douyin.order where pay_status = #{status} and create_time < #{orderTime}")
     List<OrderAndDetail> getByStatusOrderTimeLT(short status, LocalDateTime orderTime);
 }

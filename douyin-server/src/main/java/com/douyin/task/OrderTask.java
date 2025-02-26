@@ -22,10 +22,10 @@ public class OrderTask {
     /**
      * 超时订单处理
      */
-    @Scheduled(cron = "0 * * * * ? ")
+    @Scheduled(cron = "0/5 * * * * ? ")
     public void outOfTime() {
         log.info("订单超时，定时处理", LocalDateTime.now());
-        List<OrderAndDetail> ordersList = orderMapper.getByStatusOrderTimeLT((short)0, LocalDateTime.now().plusMinutes(-15));
+        List<OrderAndDetail> ordersList = orderMapper.getByStatusOrderTimeLT((short)0, LocalDateTime.now().plusMinutes(-1));
         if(ordersList != null && ordersList.size() > 0){
             for (OrderAndDetail orders : ordersList) {
                 orders.setPayStatus((short)2);
