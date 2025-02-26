@@ -1,4 +1,4 @@
-package com.douyin.controller;
+package com.douyin.controller.user;
 
 import com.douyin.dto.LoginUser;
 import com.douyin.entity.User;

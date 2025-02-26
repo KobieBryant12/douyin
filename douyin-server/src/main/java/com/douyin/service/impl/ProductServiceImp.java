@@ -106,4 +106,10 @@ public class ProductServiceImp implements ProductService {
         //修改菜品表
         productMapper.update(product);
     }
+
+    public List<Product> list(Product product) {
+        List<Product> productList = productMapper.list(product);
+
+        return productList;
+    }
 }

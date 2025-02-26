@@ -1,4 +1,4 @@
-package com.douyin.controller;
+package com.douyin.controller.admin;
 
 
 import com.douyin.dto.ProductDTO;

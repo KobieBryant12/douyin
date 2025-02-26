@@ -1,6 +1,5 @@
-package com.douyin.controller;
+package com.douyin.controller.user;
 
-import com.douyin.dto.ShoppingCartDTO;
 import com.douyin.entity.ShoppingCart;
 import com.douyin.result.Result;
 import com.douyin.service.ShoppingCartService;

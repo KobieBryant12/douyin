@@ -6,6 +6,7 @@ import com.douyin.entity.ShoppingCart;
 import com.douyin.entity.SingleOrderDetail;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -83,4 +84,7 @@ public interface OrderMapper {
      * @return
      */
     List<OrderAndDetail> listByOrderIds(List<Long> orderIds);
+
+    @Select("select * from order where status = #{status} and order_time < #{orderTime}")
+    List<OrderAndDetail> getByStatusOrderTimeLT(short status, LocalDateTime orderTime);
 }

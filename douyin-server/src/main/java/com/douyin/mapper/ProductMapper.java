@@ -12,6 +12,14 @@ import java.util.List;
 public interface ProductMapper {
 
     /**
+     * 根据分类ID查询商品数量
+     * @param id
+     * @return
+     */
+
+    @Select("select count(id) from product where category_id = #{id}")
+    Integer countByCategoryId(Long id);
+    /**
      * 插入商品
      * @param product
      */
@@ -58,4 +66,6 @@ public interface ProductMapper {
      * @return
      */
     List<Product> queryProductStatusByProductIds(List<Long> productIds);
+
+    List<Product> list(Product product);
 }

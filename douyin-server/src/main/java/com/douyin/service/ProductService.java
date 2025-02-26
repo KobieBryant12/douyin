@@ -2,6 +2,7 @@ package com.douyin.service;
 
 import com.douyin.dto.ProductDTO;
 import com.douyin.dto.ProductPageQueryDTO;
+import com.douyin.entity.Product;
 import com.douyin.result.PageResult;
 
 import java.util.List;
@@ -31,5 +32,9 @@ public interface ProductService {
      * 修改商品
      * @param productDTO
      */
-    void update(ProductDTO productDTO);
+    void update(ProductDTO productDTO);/*
+     * 根据分类id查询商品
+     */
+
+    List<Product> list(Product product);
 }
