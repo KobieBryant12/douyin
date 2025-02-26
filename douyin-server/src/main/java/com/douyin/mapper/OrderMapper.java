@@ -36,14 +36,6 @@ public interface OrderMapper {
     @Select("select id from douyin.order where user_id = #{userId} and pay_status = 0")
     Long getByUserIdAndStatus(OrderAndDetail orderAndDetail);
 
-    /**
-     * 根据订单ID查询订单支付方式
-     * @param orderId
-     * @return
-     */
-    @Select("select * from douyin.order where id = #{orderId}")
-    Short getPayMethodByOrderId(Long orderId);
-
 
     /**
      * 根据订单id集合和状态返回订单id

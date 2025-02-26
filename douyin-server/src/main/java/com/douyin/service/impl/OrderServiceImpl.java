@@ -70,22 +70,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
-        //根据商品id和用户id查询是否有关联的未支付的订单
-        SingleOrderDetail[] details = new SingleOrderDetail[products.length];
-        for(int i = 0; i < details.length; i++){
-            SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
-            singleOrderDetail.setProductId(products[i].getProductId());
-            singleOrderDetail.setUserId(orderAndDetail.getUserId());
-            details[i] = singleOrderDetail;
-        }
-        List<SingleOrderDetail> detailsList = Arrays.asList(details);
-        List<Long> orderIds = orderDetailMapper.listByUserIdsAndProductIds(detailsList);
-        if(orderIds != null && orderIds.size() != 0){
-            List<OrderAndDetail> orderAndDetails = orderMapper.listByOrderIds(orderIds);
-            for(int i = 0; i < orderAndDetails.size(); i++){
-                if(orderAndDetails.get(i).getPayStatus() == (short)0){
-                    return Result.error(MessageConstant.UNPROCESSED_ORDER);
-                }
+        //根据用户id查询是否有关联的未支付的订单
+        OrderAndDetail orderAndDetail1 = new OrderAndDetail();
+        orderAndDetail1.setUserId(userId);
+        List<OrderAndDetail> list = orderMapper.list(orderAndDetail1);
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).getPayStatus() == (short)0){
+                return Result.error(MessageConstant.UNPROCESSED_ORDER);
             }
         }
 
@@ -214,6 +205,8 @@ public class OrderServiceImpl implements OrderService {
         // 根据订单号查询订单
         //如果订单状态为1、2返回错误信息
         OrderAndDetail order = orderMapper.getByNumber(orderNum);
+        if (order == null)
+            return Result.error(MessageConstant.ORDER_NOT_FOUND);
         if (order.getPayStatus() == (short)1)
             return Result.error(MessageConstant.ORDER_PAID);
         if(order.getPayStatus() == (short)2)

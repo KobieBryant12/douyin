@@ -73,8 +73,9 @@ public class OrderController {
      */
     @PutMapping("/cancel/{orderNum}")
     public Result cancel(@PathVariable("orderNum") String orderNum) throws Exception {
-        orderService.cancelOrderByNum(orderNum);
-        return Result.success();
+        log.info("取消订单：{}", orderNum);
+
+        return orderService.cancelOrderByNum(orderNum);
     }
 
     /**
