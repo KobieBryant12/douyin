@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductMapper productMapper;
 
     /**
-     * 创建订,成功返回订单ID
+     * 创建订单,成功返回订单ID
      * @param orderAndDetail
      * @return orderId
      */
@@ -69,10 +69,24 @@ public class OrderServiceImpl implements OrderService {
             return Result.error(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
-        //根据用户id查询是否有未支付的订单，有则返回错误信息
-        Long byUserIdAndStatus = orderMapper.getByUserIdAndStatus(orderAndDetail);
-        if(byUserIdAndStatus != null){
-            return Result.error(MessageConstant.UNPROCESSED_ORDER);
+
+        //根据商品id和用户id查询是否有关联的未支付的订单
+        SingleOrderDetail[] details = new SingleOrderDetail[products.length];
+        for(int i = 0; i < details.length; i++){
+            SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
+            singleOrderDetail.setProductId(products[i].getProductId());
+            singleOrderDetail.setUserId(orderAndDetail.getUserId());
+            details[i] = singleOrderDetail;
+        }
+        List<SingleOrderDetail> detailsList = Arrays.asList(details);
+        List<Long> orderIds = orderDetailMapper.listByUserIdsAndProductIds(detailsList);
+        if(orderIds != null && orderIds.size() != 0){
+            List<OrderAndDetail> orderAndDetails = orderMapper.listByOrderIds(orderIds);
+            for(int i = 0; i < orderAndDetails.size(); i++){
+                if(orderAndDetails.get(i).getPayStatus() == (short)0){
+                    return Result.error(MessageConstant.UNPROCESSED_ORDER);
+                }
+            }
         }
 
         //创建订单表，地址id设置为用户的默认地址

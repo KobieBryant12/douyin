@@ -84,4 +84,11 @@ public interface OrderMapper {
      */
     @Update("update douyin.order set address_id = #{addressId} where user_id = #{userId} and order_number = #{orderNumber}")
     void updateAddress(OrderAndDetail orderAndDetail);
+
+    /**
+     * 根据订单id集合查询返回订单信息
+     * @param orderIds
+     * @return
+     */
+    List<OrderAndDetail> listByOrderIds(List<Long> orderIds);
 }

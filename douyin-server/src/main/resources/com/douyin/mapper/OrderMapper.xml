@@ -24,6 +24,15 @@
         </where>
     </select>
 
+    <select id="listByOrderIds" resultType="com.douyin.entity.OrderAndDetail">
+        select *
+        from douyin.order
+        where id in
+        <foreach collection="orderIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <update id="update" parameterType="com.douyin.entity.OrderAndDetail">
         update douyin.order
         <set>

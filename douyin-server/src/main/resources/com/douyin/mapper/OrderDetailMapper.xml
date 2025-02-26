@@ -21,5 +21,20 @@
         </where>
     </select>
 
+    <select id="listByUserIdsAndProductIds" resultType="java.lang.Long">
+        select order_id
+        from douyin.order_detail
+        <where>
+            user_id in
+            <foreach collection="detailsList" item="user" separator="," open="(" close=")">
+                #{user.userId}
+            </foreach>
+            and product_id in
+            <foreach collection="detailsList" item="product" separator="," open="(" close=")">
+                #{product.productId}
+            </foreach>
+        </where>
+    </select>
+
 
 </mapper>

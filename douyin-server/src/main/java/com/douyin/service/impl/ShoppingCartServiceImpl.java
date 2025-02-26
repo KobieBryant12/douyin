@@ -47,21 +47,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if(status == 0){
             return Result.error(MessageConstant.SUSPENSION_OF_SALES);
         }
-        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续添加,让用户不要重复购买同一商品
-        SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
-        singleOrderDetail.setProductId(shoppingCart.getProductId());
-        singleOrderDetail.setUserId(shoppingCart.getUserId());
-        List<Long> orderIds = orderDetailMapper.list(singleOrderDetail);
-
-        //如果订单明细表中查询到记录，再根据查询到的订单id查询是否有未处理的订单
-        if(orderIds != null && orderIds.size() != 0){
-            List<Long> byOrderIdAndStatus = orderMapper.getByOrderIdAndStatus(orderIds);
-            //有未处理的订单
-            if(byOrderIdAndStatus != null && byOrderIdAndStatus.size() != 0){
-                return Result.error(MessageConstant.UNPROCESSED_ORDER);
-            }
-        }
-
 
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
 

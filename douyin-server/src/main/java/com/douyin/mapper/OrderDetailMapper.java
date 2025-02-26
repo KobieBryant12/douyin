@@ -42,4 +42,10 @@ public interface OrderDetailMapper {
      */
     @Delete("delete from douyin.order_detail where user_id = #{id}")
     void deleteByUserId(Long id);
+
+    /**
+     * 根据userId和productId集合查询订单号集合
+     * @return
+     */
+    List<Long> listByUserIdsAndProductIds(List<SingleOrderDetail> detailsList);
 }
