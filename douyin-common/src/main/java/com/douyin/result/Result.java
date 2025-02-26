@@ -14,7 +14,7 @@ public class Result {
 
     //增删改 成功响应
     public static Result success(){
-        return new Result(200,"success",null);
+        return new Result(1,"success",null);
     }
     //查询 成功响应
     public static Result success(Object data){

@@ -12,9 +12,21 @@
             <if test="productId!=null">
                 and product_id=#{productId}
             </if>
-
         </where>
+    </delete>
 
+    <delete id="deleteByList">
+        delete from shopping_cart
+        <where>
+            user_id in
+               <foreach collection="orderDetails" item="user" separator="," open="(" close=")">
+                   #{user.userId}
+               </foreach>
+            and product_id in
+                <foreach collection="orderDetails" item="product" separator="," open="(" close=")">
+                    #{product.productId}
+                </foreach>
+        </where>
     </delete>
 
     <insert id="insertBatch" parameterType="list">

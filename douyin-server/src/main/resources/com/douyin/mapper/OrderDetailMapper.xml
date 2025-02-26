@@ -5,10 +5,10 @@
 <mapper namespace="com.douyin.mapper.OrderDetailMapper">
     <insert id="addOrderDetail">
         insert into douyin.order_detail
-        (order_id, user_id, product_id, number, price)
+        (order_id, user_id, product_id, product_name, number, price)
         values
         <foreach collection="orderDetails" item="sod" separator=",">
-            (#{sod.orderId}, #{sod.userId}, #{sod.productId}, #{sod.number}, #{sod.price})
+            (#{sod.orderId}, #{sod.userId}, #{sod.productId}, #{sod.productName}, #{sod.number}, #{sod.price})
         </foreach>
     </insert>
     

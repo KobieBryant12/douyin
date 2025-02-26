@@ -1,5 +1,6 @@
 package com.douyin.service;
 
+import com.douyin.dto.OrderAddressDTO;
 import com.douyin.dto.OrdersPaymentDTO;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.result.Result;
@@ -29,4 +30,10 @@ public interface OrderService {
     void paySuccess(OrdersPaymentDTO ordersPaymentDTO);
 
     Result cancelOrderByNum(String orderNum);
+
+    /**
+     * 修改订单地址
+     * @param orderAddressDTO
+     */
+    Result updateAddress(OrderAddressDTO orderAddressDTO);
 }

@@ -20,6 +20,8 @@ public class SingleOrderDetail {
 
     private Long productId; //商品id
 
+    private String productName; //商品名称
+
     private Integer number; //商品数量
 
     private BigDecimal price; //商品单价

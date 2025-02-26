@@ -2,7 +2,9 @@ package com.douyin.controller;
 
 
 
+import com.douyin.dto.OrderAddressDTO;
 import com.douyin.dto.OrdersPaymentDTO;
+import com.douyin.entity.AddressBook;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.result.Result;
 import com.douyin.service.OrderService;
@@ -73,5 +75,17 @@ public class OrderController {
     public Result cancel(@PathVariable("orderNum") String orderNum) throws Exception {
         orderService.cancelOrderByNum(orderNum);
         return Result.success();
+    }
+
+    /**
+     * 修改订单地址
+     * @param orderAddressDTO
+     * @return
+     */
+    @PostMapping("/address")
+    public Result updateAddress(@RequestBody OrderAddressDTO orderAddressDTO){
+        log.info("用户id:{} 修改订单号为：{}的订单地址", orderAddressDTO.getUserId(), orderAddressDTO.getOrderNumber());
+
+        return orderService.updateAddress(orderAddressDTO);
     }
 }

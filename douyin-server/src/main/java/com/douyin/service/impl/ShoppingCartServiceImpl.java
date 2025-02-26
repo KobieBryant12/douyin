@@ -47,7 +47,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if(status == 0){
             return Result.error(MessageConstant.SUSPENSION_OF_SALES);
         }
-        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续添加
+        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续添加,让用户不要重复购买同一商品
         SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
         singleOrderDetail.setProductId(shoppingCart.getProductId());
         singleOrderDetail.setUserId(shoppingCart.getUserId());
@@ -106,22 +106,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     @Override
     public Result decreaseProductNum(ShoppingCart shoppingCart) {
-        //根据用户id和商品id查询订单明细表，如果订单明细表中没有继续删除
-        SingleOrderDetail singleOrderDetail = new SingleOrderDetail();
-        singleOrderDetail.setProductId(shoppingCart.getProductId());
-        singleOrderDetail.setUserId(shoppingCart.getUserId());
-        List<Long> orderIds = orderDetailMapper.list(singleOrderDetail);
-
-        //如果订单明细表中查询到记录，再根据查询到的订单id查询是否有未处理的订单
-        if(orderIds != null && orderIds.size() != 0){
-            List<Long> byOrderIdAndStatus = orderMapper.getByOrderIdAndStatus(orderIds);
-            //有未处理的订单
-            if(byOrderIdAndStatus != null && byOrderIdAndStatus.size() != 0){
-                return Result.error(MessageConstant.UNPROCESSED_ORDER);
-            }
-        }
-
-        //没有有未处理的订单
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
         Integer number = list.get(0).getNumber();
         if (number > 1) {//数量大于1,将数量-1
@@ -139,12 +123,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     @Override
     public Result clean(Long userId) {
-        OrderAndDetail orderAndDetail = new OrderAndDetail();
-        orderAndDetail.setUserId(userId);
-        Long byUserIdAndStatus = orderMapper.getByUserIdAndStatus(orderAndDetail);
-        if(byUserIdAndStatus != null){
-            return Result.error(MessageConstant.UNPROCESSED_ORDER);
-        }
         shoppingCartMapper.cleanById(userId);
         return Result.success();
     }

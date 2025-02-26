@@ -1,5 +1,6 @@
 package com.douyin.mapper;
 
+import com.douyin.dto.OrderAddressDTO;
 import com.douyin.entity.OrderAndDetail;
 import com.douyin.entity.ShoppingCart;
 import com.douyin.entity.SingleOrderDetail;
@@ -76,4 +77,11 @@ public interface OrderMapper {
      */
     @Delete("delete from douyin.order where user_id = #{id}")
     void deleteByUserId(Long id);
+
+    /**
+     * 更新订单地址
+     * @param orderAndDetail
+     */
+    @Update("update douyin.order set address_id = #{addressId} where user_id = #{userId} and order_number = #{orderNumber}")
+    void updateAddress(OrderAndDetail orderAndDetail);
 }

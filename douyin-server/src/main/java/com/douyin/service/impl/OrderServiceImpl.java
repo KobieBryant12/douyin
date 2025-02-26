@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.douyin.constant.MessageConstant;
 import com.douyin.context.BaseContext;
+import com.douyin.dto.OrderAddressDTO;
 import com.douyin.dto.OrdersPaymentDTO;
 import com.douyin.entity.*;
 import com.douyin.exception.OrderBusinessException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -93,11 +95,15 @@ public class OrderServiceImpl implements OrderService {
             ShoppingCart byUserIdAndProductId = shoppingCartMapper.getByUserIdAndProductId(singleOrderDetails[i].getProductId(), singleOrderDetails[i].getUserId());
             singleOrderDetails[i].setPrice(byUserIdAndProductId.getPrice());
             singleOrderDetails[i].setNumber(byUserIdAndProductId.getNumber());
+            singleOrderDetails[i].setProductName(byUserIdAndProductId.getName());
         }
         List<SingleOrderDetail> orderDetails = Arrays.asList(singleOrderDetails);
 
         //创建订单明细表
         orderDetailMapper.addOrderDetail(orderDetails);
+
+        //删除购物车中对应的商品
+        shoppingCartMapper.deleteByList(orderDetails);
         return Result.success(orderId);
     }
 
@@ -182,17 +188,6 @@ public class OrderServiceImpl implements OrderService {
         order.setCheckoutTime(LocalDateTime.now());
         //更新订单状态
         orderMapper.update(order);
-
-        //删除订单中在购物车里对应的商品
-        List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
-        ShoppingCart shoppingCart = new ShoppingCart();
-        for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
-            Long productId =  singleOrderDetail.getProductId();
-            shoppingCart.setUserId(order.getUserId());
-            shoppingCart.setProductId(productId);
-            shoppingCartMapper.delete(shoppingCart);
-        }
-
     }
 
     /**
@@ -215,15 +210,42 @@ public class OrderServiceImpl implements OrderService {
         //更新订单状态
         orderMapper.update(order);
 
-        //根据用户id和商品id删除订单中在购物车里对应的商品
-        List<SingleOrderDetail> singleOrderDetails = orderDetailMapper.listByOrderId(order.getId());
-        ShoppingCart shoppingCart = new ShoppingCart();
-        for (SingleOrderDetail singleOrderDetail : singleOrderDetails){
-            Long productId =  singleOrderDetail.getProductId();
-            shoppingCart.setUserId(order.getUserId());
-            shoppingCart.setProductId(productId);
-            shoppingCartMapper.delete(shoppingCart);
+        return Result.success();
+    }
+
+    /**
+     * 修改订单地址
+     * @param orderAddressDTO
+     */
+    @Transactional
+    @Override
+    public Result updateAddress(OrderAddressDTO orderAddressDTO) {
+        //查询用户除了当前地址是否有其他地址，没有则返回错误信息
+        AddressBook addressBook = new AddressBook();
+        addressBook.setUserId(orderAddressDTO.getUserId());
+        List<AddressBook> addressList = addressBookMapper.list(addressBook);
+        if(addressList == null || addressList.size() <= 1){
+            return Result.error(MessageConstant.NO_OTHER_ADDRESS);
         }
+
+        //查询要修改的订单是否是未支付或者支付状态,如果已取消则返回错误信息，如果已支付但距支付时间相差两天则不能修改
+        OrderAndDetail byOrderNumber = orderMapper.getByNumber(orderAddressDTO.getOrderNumber());
+        if(byOrderNumber.getPayStatus() == (short)2){
+            return Result.error(MessageConstant.ORDER_CANCELLED);
+        }
+        if(byOrderNumber.getPayStatus() == (short)1){
+            LocalDateTime checkoutTime = byOrderNumber.getCheckoutTime();
+            LocalDateTime nowTime = LocalDateTime.now();
+            Duration duration = Duration.between(nowTime,checkoutTime);
+            Long day = duration.toDays();
+            if(day >= 2L){
+                return Result.error(MessageConstant.MORE_THAN_TWO_DAYS);
+            }
+        }
+
+        //修改订单地址
+        byOrderNumber.setAddressId(orderAddressDTO.getNewAddressId());
+        orderMapper.updateAddress(byOrderNumber);
         return Result.success();
     }
 

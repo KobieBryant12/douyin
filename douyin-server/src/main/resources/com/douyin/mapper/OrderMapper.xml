@@ -39,7 +39,6 @@
             <if test="checkoutTime != null">
                 checkout_time=#{checkoutTime},
             </if>
-
         </set>
         where id = #{id}
     </update>

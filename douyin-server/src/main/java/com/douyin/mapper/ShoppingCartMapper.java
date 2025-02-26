@@ -1,6 +1,7 @@
 package com.douyin.mapper;
 
 import com.douyin.entity.ShoppingCart;
+import com.douyin.entity.SingleOrderDetail;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -54,4 +55,8 @@ public interface ShoppingCartMapper {
     @Delete("delete from douyin.shopping_cart where user_id=#{userId}")
     void cleanById(Long userId);
 
+    /**
+     * 根据集合删除购物车中的商品
+     */
+    void deleteByList(List<SingleOrderDetail> orderDetails);
 }
