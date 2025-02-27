@@ -1,5 +1,6 @@
 package com.douyin.controller.user;
 
+import com.douyin.constant.MessageConstant;
 import com.douyin.dto.LoginUser;
 import com.douyin.entity.User;
 import com.douyin.result.Result;
@@ -44,11 +45,16 @@ public class LoginController {
         //查询用户名和密码是否正确
         User u = userService.login(user);
 
+        if(u == null){
+            return Result.error(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+
+        String stringId = u.getId().toString();
         //用户名和密码正确
         if(u != null){
             //用户状态为启用
             if(u.getStatus() == (short)1) {
-                if (redisTemplate.opsForValue().get(username) == null) {//用户之前未登录
+                if (redisTemplate.opsForValue().get(stringId) == null) {//用户之前未登录
                     Map<String, Object> claims = new HashMap<>();
                     claims.put("id", u.getId());
                     claims.put("name", u.getName());
@@ -57,9 +63,10 @@ public class LoginController {
                     String jwt = JwtUtils.generateJwt(claims); //jwt包含了当前登录用户的信息
 
                     //将jwt令牌和对应的用户名存入redis中，key为username，value为对应的jwt，并设置相同的有效期
-                    redisTemplate.opsForValue().set(u.getUsername(), jwt, 12, TimeUnit.HOURS);
-                    String o = (String) redisTemplate.opsForValue().get(u.getUsername());
+                    redisTemplate.opsForValue().set(stringId, jwt, 12, TimeUnit.HOURS);
+                    String o = (String) redisTemplate.opsForValue().get(stringId);
                     System.out.println(o);
+
                     return Result.success(jwt);
                 } else {//用户之前已登录
                     return Result.error("用户已登录");

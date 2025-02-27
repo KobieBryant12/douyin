@@ -22,12 +22,12 @@ public class AddressBookController {
      *
      * @return
      */
-    @GetMapping("/list/{userId}")
-    public Result list(@PathVariable Long userId) {
+    @GetMapping("/list")
+    public Result list() {
         AddressBook addressBook = new AddressBook();
         //TODO
 
-        addressBook.setUserId(userId);
+        addressBook.setUserId(BaseContext.getCurrentId());
         List<AddressBook> list = addressBookService.list(addressBook);
         return Result.success(list);
     }
@@ -40,6 +40,7 @@ public class AddressBookController {
      */
     @PostMapping
     public Result save(@RequestBody AddressBook addressBook) {
+        addressBook.setUserId(BaseContext.getCurrentId());
 
         addressBookService.save(addressBook);
         return Result.success();
@@ -76,6 +77,7 @@ public class AddressBookController {
      */
     @PutMapping("/default")
     public Result setDefault(@RequestBody AddressBook addressBook) {
+        addressBook.setUserId(BaseContext.getCurrentId());
         addressBookService.setDefault(addressBook);
         return Result.success();
     }

@@ -85,7 +85,8 @@ public class UserServiceImpl implements UserService{
         addressBookMapper.deleteByUserId(id);
 
         //删除用户的同时将用户在redis中的jwt删除
-        redisTemplate.delete(user.getUsername());
+        String stringId = user.getId().toString();
+        redisTemplate.delete(stringId);
 
         //根据用户id删除用户表中的记录
         userMapper.deleteById(id);
@@ -107,6 +108,7 @@ public class UserServiceImpl implements UserService{
         userMapper.setUserStatus(newStatus, id);
     }
 
+    @Transactional
     @Override
     public Result changeUserPwd(ChangePwd changePwd) {
         User user = userMapper.getByIdAndPassword(changePwd.getId(), DigestUtils.md5DigestAsHex(changePwd.getPassword().getBytes()));
@@ -132,7 +134,8 @@ public class UserServiceImpl implements UserService{
         userMapper.updatePwdById(user);
 
         //修改完密码后，删除该用户在redis中的jwt令牌
-        redisTemplate.delete(user.getUsername());
+        String stringId = user.getId().toString();
+        redisTemplate.delete(stringId);
 
         return Result.success();
     }

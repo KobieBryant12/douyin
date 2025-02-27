@@ -28,6 +28,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      * 新增地址
      * @param addressBook
      */
+    @Transactional
     @Override
     public void save(AddressBook addressBook) {
         List<AddressBook> list = addressBookMapper.list(addressBook);

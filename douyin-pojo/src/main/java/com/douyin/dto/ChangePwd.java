@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangePwd {
-    private Long id;
+    private Long id; //用户id
+    private String userName; //用户名
     private String password; //修改前的密码
     private String newPassword; //修改后的密码
     private String confirmPwd; //确认修改的密码

@@ -1,5 +1,6 @@
 package com.douyin.controller.user;
 
+import com.douyin.context.BaseContext;
 import com.douyin.entity.ShoppingCart;
 import com.douyin.result.Result;
 import com.douyin.service.ShoppingCartService;
@@ -25,7 +26,9 @@ public class ShoppingCartController {
      */
     @PostMapping("/add")
     public Result add(@RequestBody ShoppingCart shoppingCart) {
+        shoppingCart.setUserId(BaseContext.getCurrentId());
         log.info("添加购物车，商品信息为：{}", shoppingCart);
+
 
         return shoppingCartService.addShoppingCart(shoppingCart);
     }
@@ -34,10 +37,10 @@ public class ShoppingCartController {
      * 查看用户购物车数据
      * @return
      */
-    @GetMapping("/list/{userId}")
-    public Result list(@PathVariable Long userId) {
+    @GetMapping("/list")
+    public Result list() {
         log.info("查看购物车数据");
-        List<ShoppingCart> shoppingCartList = shoppingCartService.list(userId);
+        List<ShoppingCart> shoppingCartList = shoppingCartService.list(BaseContext.getCurrentId());
         return Result.success(shoppingCartList);
     }
 
@@ -48,6 +51,7 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/sub")
     public Result delete(@RequestBody ShoppingCart shoppingCart){
+        shoppingCart.setUserId(BaseContext.getCurrentId());
         log.info("删除购物车中的商品:{}",shoppingCart);
 
         return  shoppingCartService.decreaseProductNum(shoppingCart);
@@ -57,10 +61,10 @@ public class ShoppingCartController {
      * 清空购物车
      * @return
      */
-    @DeleteMapping("/clean/{userId}")
-    public Result clean(@PathVariable Long userId){
+    @DeleteMapping("/clean")
+    public Result clean(){
         log.info("清空购物车");
 
-        return shoppingCartService.clean(userId);
+        return shoppingCartService.clean(BaseContext.getCurrentId());
     }
 }

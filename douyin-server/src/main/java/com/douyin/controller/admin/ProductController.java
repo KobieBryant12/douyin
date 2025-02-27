@@ -49,7 +49,7 @@ public class ProductController {
      * @param ids
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping()
     public Result delete(@RequestParam("ids") List<Long> ids){
         log.info("删除商品：{}",ids);
         productService.deleteBatch(ids);
@@ -61,7 +61,7 @@ public class ProductController {
      * @param productDTO
      * @return
      */
-    @PutMapping
+    @PutMapping()
     public Result update(@RequestBody ProductDTO productDTO){
         log.info("修改商品：{}",productDTO);
         productService.update(productDTO);

@@ -2,6 +2,7 @@ package com.douyin.controller.user;
 
 
 
+import com.douyin.context.BaseContext;
 import com.douyin.dto.OrderAddressDTO;
 import com.douyin.dto.OrdersPaymentDTO;
 import com.douyin.entity.OrderAndDetail;
@@ -26,6 +27,7 @@ public class OrderController {
      */
     @PostMapping("/add")
     public Result addOrder(@RequestBody OrderAndDetail orderAndDetail){
+        orderAndDetail.setUserId(BaseContext.getCurrentId());
         log.info("用户：{} 创建订单", orderAndDetail.getUserId());
 
         return orderService.addOrder(orderAndDetail);
@@ -37,7 +39,9 @@ public class OrderController {
      * @return 返回用户的订单明细集合
      */
     @PostMapping("/query")
-    public Result listOrder(@RequestBody OrderAndDetail orderAndDetail){
+    public Result listOrder(){
+        OrderAndDetail orderAndDetail = new OrderAndDetail();
+        orderAndDetail.setUserId(BaseContext.getCurrentId());
         log.info("查询用户：{} 的订单信息", orderAndDetail.getUserId());
 
         return orderService.listOrder(orderAndDetail);
@@ -84,6 +88,7 @@ public class OrderController {
      */
     @PostMapping("/address")
     public Result updateAddress(@RequestBody OrderAddressDTO orderAddressDTO){
+        orderAddressDTO.setUserId(BaseContext.getCurrentId());
         log.info("用户id:{} 修改订单号为：{}的订单地址", orderAddressDTO.getUserId(), orderAddressDTO.getOrderNumber());
 
         return orderService.updateAddress(orderAddressDTO);
