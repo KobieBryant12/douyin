@@ -1,5 +1,6 @@
 package com.douyin.context;
 
+
 public class BaseContext {
 
     private static ThreadLocal<Long> threadLocal = new ThreadLocal<>();

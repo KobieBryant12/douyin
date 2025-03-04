@@ -32,12 +32,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ProductMapper productMapper;
 
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Autowired
-    private OrderDetailMapper orderDetailMapper;
-
 
     @Transactional
     @Override
