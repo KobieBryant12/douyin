@@ -1,10 +1,8 @@
 package com.douyin.mapper;
 
-import com.douyin.entity.OrderAndDetail;
-import com.douyin.entity.ShoppingCart;
+
 import com.douyin.entity.SingleOrderDetail;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

@@ -36,3 +36,10 @@ logging:
   level:
     org.springframework.transaction: DEBUG
 
+#RocketMQ的配置
+rocketmq:
+  #nameServer
+  name-server: 0.0.0.0:9876
+  #生产者组
+  producer:
+    group: springBootGroup

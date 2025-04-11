@@ -9,17 +9,30 @@ import com.douyin.entity.OrderAndDetail;
 import com.douyin.result.Result;
 import com.douyin.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.producer.SendCallback;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
 @RequestMapping("/user/order")
 public class OrderController {
 
+    public final static String TOPIC = "OrderTopic01";
+
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
     /**
      * 创建订单
@@ -30,7 +43,22 @@ public class OrderController {
         orderAndDetail.setUserId(BaseContext.getCurrentId());
         log.info("用户：{} 创建订单", orderAndDetail.getUserId());
 
-        return orderService.addOrder(orderAndDetail);
+        Result result = orderService.addOrder(orderAndDetail);
+        Message<OrderAndDetail> msg = MessageBuilder.withPayload(orderAndDetail).build();
+        //向MQ发送异步消息
+        rocketMQTemplate.asyncSend(TOPIC, msg, new SendCallback() {
+            @Override
+            public void onSuccess(SendResult sendResult) {
+                log.info("延迟消息投递成功，当前时间：{}", LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                log.info("消息投递失败：{}，错误信息：{}", orderAndDetail, throwable.getMessage());
+            }
+        }, 3000, 5);
+
+        return result;
     }
 
 
